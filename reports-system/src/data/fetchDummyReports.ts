@@ -39,7 +39,7 @@ export const fetchDummyReports = async (id?: string) => {
 };
 
 export const addReport = async (report: Report) => {
-  const validReport = reportSchema.parse(report); 
+  const validReport = reportSchema.parse(report);
   data.push(validReport);
   return validReport;
 };
@@ -47,4 +47,30 @@ export const addReport = async (report: Report) => {
 export const deleteReport = async (id: string) => {
   data = data.filter((report) => report.id !== id);
   return true;
+};
+
+export const updateReport = async ({
+  id,
+  updated,
+}: {
+  id: string;
+  updated: Partial<Report>;
+}) => {
+  const index = data.findIndex((report) => report.id === id);
+  if (index === -1) throw new Error("Report not found");
+
+  const mergedReport = {
+    ...data[index],
+    ...updated,
+    location: {
+      ...data[index].location,
+      ...updated.location,
+    },
+    createdAt: data[index].createdAt,
+    id: data[index].id,
+  };
+
+  const validReport = reportSchema.parse(mergedReport);
+  data[index] = validReport;
+  return validReport;
 };
