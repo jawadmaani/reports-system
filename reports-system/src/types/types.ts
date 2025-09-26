@@ -10,7 +10,7 @@ export const reportSchema = z.object({
   importance: z.enum(["low", "medium", "high"]),
   type: z.enum(["signal", "roadwork", "accident", "other"]),
   description: z.string().min(1, "Description cannot be empty"),
-  createdAt: z.string().datetime(), 
+  createdAt: z.string().datetime(),
 });
 
 export const reportsSchema = z.array(reportSchema);

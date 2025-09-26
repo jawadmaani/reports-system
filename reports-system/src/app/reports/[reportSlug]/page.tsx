@@ -8,6 +8,7 @@ import { reportSchema } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReportEditPage from "@/componrnts/reports/report-edit";
+import ReportMap from "@/componrnts/reports/report-map";
 
 interface ReportsDetailsPageProps {
   params: { reportSlug: string };
@@ -17,6 +18,8 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
   const navigate = useRouter();
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["report", params.reportSlug],
     queryFn: () => fetchDummyReports(params.reportSlug),
@@ -70,9 +73,21 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
         <p>
           <strong>Type:</strong> {parsedData.type}
         </p>
+
         <p>
-          <strong>Location:</strong> {parsedData.location.lat},{" "}
-          {parsedData.location.lng}
+          <div>
+            <strong>Location:</strong>{" "}
+            <button onClick={() => setShowMap((prev) => !prev)}>
+              {showMap ? "Hide Map" : "Show Map"}
+            </button>
+            {showMap && (
+              <ReportMap
+                latitude={parsedData.location.lat}
+                longitude={parsedData.location.lng}
+                height="400px"
+              />
+            )}
+          </div>
         </p>
         <p>
           <strong>Created At:</strong>{" "}
