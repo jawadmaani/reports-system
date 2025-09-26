@@ -51,7 +51,7 @@ const ReportForm = ({ onSubmit, initialData }: ReportFormProps) => {
       <label>
         Type:
         <select name="type" defaultValue={initialData?.type}>
-          <option value="signal">Signal</option>
+          <option value="traffic_light">Signal</option>
           <option value="roadwork">Roadwork</option>
           <option value="accident">Accident</option>
           <option value="other">Other</option>

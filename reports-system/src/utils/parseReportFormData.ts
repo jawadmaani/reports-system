@@ -18,7 +18,7 @@ export const parseReportFormData = (
       lng: parseFloat(data.lng as string),
     },
     importance: data.importance as "low" | "medium" | "high",
-    type: data.type as "signal" | "roadwork" | "accident" | "other",
+    type: data.type as "traffic_light" | "roadwork" | "accident" | "other",
     description: data.description as string,
   };
 
