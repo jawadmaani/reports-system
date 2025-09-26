@@ -13,7 +13,7 @@ This project demonstrates building a complete reporting system with **CRUD opera
 - ✅ **Dynamic routing** with Next.js App Router  
 - ✅ **Form validation** (client-side & server-side)  
 - ✅ **Map integration** (show report location)  
-- ✅ Optimistic UI updates (invalidate queries)  
+
 
 ---
 
