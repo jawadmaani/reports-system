@@ -12,6 +12,7 @@ interface ReportEditPageProps {
 const ReportEditPage = ({ data }: ReportEditPageProps) => {
   const queryClient = useQueryClient();
   const navigate = useRouter();
+  
   const { mutate } = useMutation({
     mutationFn: updateReport,
     onSuccess: () => {

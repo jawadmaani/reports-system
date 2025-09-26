@@ -1,4 +1,6 @@
 import { Report } from "@/types/types";
+import { useState } from "react";
+import ReportMap from "./report-map";
 
 type ReportFormProps = {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -6,6 +8,18 @@ type ReportFormProps = {
 };
 
 const ReportForm = ({ onSubmit, initialData }: ReportFormProps) => {
+  const [selectedLat, setSelectedLat] = useState(
+    initialData?.location.lat || 32
+  );
+  const [selectedLng, setSelectedLng] = useState(
+    initialData?.location.lng || 35
+  );
+
+  const handleLocationSelect = (lat: number, lng: number) => {
+    setSelectedLat(lat);
+    setSelectedLng(lng);
+  };
+
   return (
     <form onSubmit={onSubmit}>
       <label>
@@ -18,24 +32,15 @@ const ReportForm = ({ onSubmit, initialData }: ReportFormProps) => {
       </label>
       <br />
 
-      <label>
-        Latitude:
-        <input
-          type="number"
-          name="lat"
-          defaultValue={initialData?.location.lat || 0}
-        />
-      </label>
-      <br />
-
-      <label>
-        Longitude:
-        <input
-          type="number"
-          name="lng"
-          defaultValue={initialData?.location.lng || 0}
-        />
-      </label>
+      <label>Location:</label>
+      <ReportMap
+        latitude={selectedLat}
+        longitude={selectedLng}
+        onLocationSelect={handleLocationSelect}
+        interactive={true}
+      />
+      <input type="hidden" name="lat" value={selectedLat} />
+      <input type="hidden" name="lng" value={selectedLng} />
       <br />
 
       <label>

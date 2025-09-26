@@ -8,6 +8,7 @@ import { parseReportFormData } from "@/utils/parseReportFormData";
 const CreateReportPage = () => {
   const queryClient = useQueryClient();
   const navigate = useRouter();
+  
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: addReport,
     onSuccess: () => {
