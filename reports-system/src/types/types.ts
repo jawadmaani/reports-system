@@ -8,7 +8,7 @@ export const reportSchema = z.object({
     lng: z.number(),
   }),
   importance: z.enum(["low", "medium", "high"]),
-  type: z.enum(["traffic_light", "roadwork", "accident", "other"]),
+  type: z.enum(["trafficLight", "roadwork", "accident", "other"]),
   description: z.string().min(1, "Description cannot be empty"),
   createdAt: z.string().datetime(),
 });
