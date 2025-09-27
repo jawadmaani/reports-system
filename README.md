@@ -7,19 +7,20 @@ This project demonstrates building a complete reporting system with **CRUD opera
 
 ## 🚀 Features
 
-- ✅ **Create, Read, Update, Delete (CRUD)** reports  
-- ✅ **Type safety** with TypeScript & Zod  
-- ✅ **Data fetching & caching** using React Query  
-- ✅ **Dynamic routing** with Next.js App Router  
-- ✅ **Form validation** (client-side & server-side)  
-- ✅ **Map integration** (show report location)  
-
+- ✅ **Create, Read, Update, Delete (CRUD)** reports
+- ✅ **Type safety** with TypeScript & Zod
+- ✅ **Data fetching & caching** using React Query
+- ✅ **Dynamic routing** with Next.js App Router
+- ✅ **Form validation** (client-side & server-side)
+- ✅ **Map integration** (show report location)
 
 ---
 
 ## 🛠️ Tech Stack
 
-- [Next.js ](https://nextjs.org/) – React framework  
-- [TypeScript](https://www.typescriptlang.org/) – static typing  
-- [React Query](https://tanstack.com/query) – server state management  
-- [Zod](https://zod.dev/) – runtime validation  
+- [Next.js](https://nextjs.org/) – React framework
+- [TypeScript](https://www.typescriptlang.org/) – static typing
+- [React Query](https://tanstack.com/query) – server state management
+- [Zod](https://zod.dev/) – runtime validation
+- [Tailwind CSS](https://tailwindcss.com/) – utility-first styling
+- [Shadcn/UI](https://ui.shadcn.com/) – modern component library
