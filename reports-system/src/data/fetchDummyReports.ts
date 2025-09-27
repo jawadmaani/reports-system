@@ -6,7 +6,7 @@ let data = [
     title: "Traffic light malfunction",
     location: { lat: 31.9566, lng: 35.9457 },
     importance: "high",
-    type: "traffic_light",
+    type: "trafficLight",
     description:
       "The traffic light near the Interior Circle has been out since the morning.",
     createdAt: new Date().toISOString(),
