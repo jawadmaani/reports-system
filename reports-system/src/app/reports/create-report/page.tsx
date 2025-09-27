@@ -1,5 +1,5 @@
 "use client";
-import ReportForm from "@/componrnts/reports/report-form";
+import ReportForm from "@/components/reports/report-form";
 import { addReport } from "@/data/fetchDummyReports";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import { parseReportFormData } from "@/utils/parseReportFormData";
 const CreateReportPage = () => {
   const queryClient = useQueryClient();
   const navigate = useRouter();
-  
+
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: addReport,
     onSuccess: () => {
@@ -31,9 +31,20 @@ const CreateReportPage = () => {
 
   return (
     <>
-      {isPending && <p>Creating report...</p>}
-      {isError && <p>Error: {(error as Error).message}</p>}
-      <ReportForm onSubmit={handleSubmit} />
+      {isPending && (
+        <p className="text-blue-600 text-center py-4">Creating report...</p>
+      )}
+      {isError && (
+        <p className="text-red-600 text-center py-4">
+          Error: {(error as Error).message}
+        </p>
+      )}
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Create New Report
+        </h1>
+        <ReportForm onSubmit={handleSubmit} />
+      </div>
     </>
   );
 };

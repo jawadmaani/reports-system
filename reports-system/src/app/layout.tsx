@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Providers from "./providers";
-import MainHeader from "../componrnts/main-header/main-header";
+import MainHeader from "../components/main-header/main-header";
+import "./globals.css";
 
 interface RootLayoutProps {
   children: ReactNode;
