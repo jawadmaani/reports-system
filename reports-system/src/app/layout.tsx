@@ -7,7 +7,7 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+const RootLayout = ({ children}: RootLayoutProps) => {
   return (
     <html lang="en">
       <body>

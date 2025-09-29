@@ -53,7 +53,7 @@ const ReportForm = ({ onSubmit, initialData }: ReportFormProps) => {
           latitude={selectedLat}
           longitude={selectedLng}
           onLocationSelect={handleLocationSelect}
-          interactive
+          interactive={true}
         />
         <Input type="hidden" name="lat" value={selectedLat} />
         <Input type="hidden" name="lng" value={selectedLng} />
