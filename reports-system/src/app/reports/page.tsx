@@ -7,6 +7,7 @@ import { reportsSchema } from "@/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ReportFilteredPage from "@/components/reports/report-filter";
+import ReportCard from "@/components/reports/report-card";
 
 export default function ReportsPage() {
   const { data, isPending, isError, error } = useQuery({
@@ -33,6 +34,7 @@ export default function ReportsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Reports</h1>
+      <ReportCard data={parseData} />
       <ReportsGrid reports={parseData} />
       <div className="flex justify-end">
         <Button asChild>
