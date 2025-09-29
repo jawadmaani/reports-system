@@ -1,11 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchDummyReports } from "../../../data/fetchDummyReports";
+import { fetchDummyReports } from "../../data/fetchDummyReports";
 import ReportsGrid from "@/components/reports/reports-grid";
 import { reportsSchema } from "@/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import ReportFilteredPage from "@/components/reports/report-filter";
 
 export default function ReportsPage() {
   const { data, isPending, isError, error } = useQuery({
@@ -38,6 +39,7 @@ export default function ReportsPage() {
           <Link href="/reports/create-report">Create New Report</Link>
         </Button>
       </div>
+      <ReportFilteredPage data={parseData} />
     </div>
   );
 }

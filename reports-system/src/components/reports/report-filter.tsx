@@ -1,29 +1,24 @@
 "use client";
 import ReportsGrid from "@/components/reports/reports-grid";
-import { fetchDummyReports } from "@/data/fetchDummyReports";
-import { reportsSchema, Report } from "@/types/types";
-import { useQuery } from "@tanstack/react-query";
+import { Report } from "@/types/types";
 import { useState } from "react";
 
-const ReportFilteredPage = () => {
+interface ReportFilteredProps {
+  data: Report[];
+}
+
+const ReportFilteredPage = ({ data }: ReportFilteredProps) => {
   const [selectedImportance, setSelectedImportance] = useState<
     "high" | "medium" | "low"
   >("high");
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["reports"],
-    queryFn: () => fetchDummyReports(),
-  });
-  if (isLoading) return <p>Loading reports...</p>;
-  if (error) return <p>Error loading reports: {(error as Error).message}</p>;
   if (data) {
-    const parsedData = reportsSchema.parse(data);
-    const filteredReportsHigh = parsedData.filter(
+    const filteredReportsHigh = data.filter(
       (report: Report) => report.importance === "high"
     );
-    const filteredReportsMedium = parsedData.filter(
+    const filteredReportsMedium = data.filter(
       (report: Report) => report.importance === "medium"
     );
-    const filteredReportsLow = parsedData.filter(
+    const filteredReportsLow = data.filter(
       (report: Report) => report.importance === "low"
     );
     const filteredReports =
