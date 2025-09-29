@@ -7,12 +7,12 @@ import {
 } from "../../../data/fetchDummyReports";
 import { reportSchema, Report } from "@/types/types";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import {  useState } from "react";
 import ReportMap from "@/components/reports/report-map";
 import ReportEditPage from "@/components/reports/report-edit";
 
 interface ReportsDetailsPageProps {
-  params: Promise<{ reportSlug: string }>;
+  params: { reportSlug: string };
 }
 
 const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
@@ -20,11 +20,10 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const { reportSlug } = use(params);
 
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ["report", reportSlug],
-    queryFn: () => fetchDummyReports(reportSlug),
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["report", params.reportSlug],
+    queryFn: () => fetchDummyReports( params.reportSlug),
   });
 
   const { mutate } = useMutation({
@@ -36,12 +35,12 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
   });
 
   const handleDelete = () => {
-    if (data) mutate(reportSlug);
+    if (data) mutate( params.reportSlug);
   };
   const handleStartDelete = () => setIsDeleting(true);
   const handleCancelDelete = () => setIsDeleting(false);
 
-  if (isPending)
+  if (isLoading)
     return <p className="text-gray-500 text-center py-10">Loading report...</p>;
   if (isError)
     return (
@@ -55,7 +54,7 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
   const parsedData = reportSchema.parse(data);
 
   const handleUpdate = (updatedReport: Report) => {
-    queryClient.setQueryData(["report", reportSlug], updatedReport);
+    queryClient.setQueryData(["report",  params.reportSlug], updatedReport);
   };
 
   return (

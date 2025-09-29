@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchDummyReports } from "../../data/fetchDummyReports";
+import { fetchDummyReports } from "../../../data/fetchDummyReports";
 import ReportsGrid from "@/components/reports/reports-grid";
 import { reportsSchema } from "@/types/types";
 import Link from "next/link";
