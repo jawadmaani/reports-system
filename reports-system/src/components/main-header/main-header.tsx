@@ -14,7 +14,7 @@ const MainHeader = () => {
         <Link
           href="/reports"
           className="text-gray-700 font-medium hover:text-blue-600 transition-colors"
-        >
+      >
           Reports
         </Link>
       </nav>
