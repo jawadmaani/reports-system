@@ -1,18 +1,25 @@
 import { ReactNode } from "react";
 import Providers from "./providers";
-import MainHeader from "../components/main-header/main-header";
 import "./globals.css";
 
 interface RootLayoutProps {
   children: ReactNode;
 }
 
-const RootLayout = ({ children}: RootLayoutProps) => {
+export const metadata = {
+  viewport: "width=device-width, initial-scale=1.0",
+  title: "Reports System",
+  description: "Reports management system",
+};
+
+const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body>
-        <MainHeader />
-        <Providers> {children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

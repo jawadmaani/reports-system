@@ -3,47 +3,51 @@ import { Report } from "@/types/types";
 interface ReportCardProps {
   data: Report[];
 }
+
 const ReportCard = ({ data = [] }: ReportCardProps) => {
+  const stats = [
+    {
+      label: "Total",
+      count: data.length,
+      bg: "bg-gray-50",
+      text: "text-gray-700",
+      border: "border-gray-200",
+    },
+    {
+      label: "High",
+      count: data.filter((r) => r.importance === "high").length,
+      bg: "bg-red-50",
+      text: "text-red-700",
+      border: "border-red-200",
+    },
+    {
+      label: "Medium",
+      count: data.filter((r) => r.importance === "medium").length,
+      bg: "bg-yellow-50",
+      text: "text-yellow-700",
+      border: "border-yellow-200",
+    },
+    {
+      label: "Low",
+      count: data.filter((r) => r.importance === "low").length,
+      bg: "bg-green-50",
+      text: "text-green-700",
+      border: "border-green-200",
+    },
+  ];
+
   return (
-    <>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white shadow rounded-lg p-4 text-center">
-          <p className="text-sm text-gray-500">Total Reports</p>
-          <p className="text-2xl font-bold">{data.length}</p>
+    <div className="grid grid-cols-4 gap-2">
+      {stats.map((s) => (
+        <div
+          key={s.label}
+          className={`${s.bg} ${s.text} ${s.border} border rounded-lg p-2 text-center transition-transform duration-200 hover:-translate-y-1 hover:shadow-sm`}
+        >
+          <p className="text-[10px] font-medium opacity-80">{s.label}</p>
+          <p className="text-sm font-bold">{s.count}</p>
         </div>
-
-        <div className="bg-red-100 text-red-800 rounded-lg p-4 text-center">
-          <p className="text-sm">High</p>
-          <p className="text-xl font-bold">
-            {data.filter((r: Report) => r.importance === "high").length}
-          </p>
-        </div>
-
-        <div className="bg-yellow-100 text-yellow-800 rounded-lg p-4 text-center">
-          <p className="text-sm">Medium</p>
-          <p className="text-xl font-bold">
-            {data.filter((r: Report) => r.importance === "medium").length}
-          </p>
-        </div>
-
-        <div className="bg-green-100 text-green-800 rounded-lg p-4 text-center">
-          <p className="text-sm">Low</p>
-          <p className="text-xl font-bold">
-            {data.filter((r: Report) => r.importance === "low").length}
-          </p>
-        </div>
-      </div>
-
-      {data.length > 0 && (
-        <div className="bg-gray-50 border rounded-lg p-4 mb-8">
-          <p className="text-sm text-gray-500">Last Report Added</p>
-          <p className="font-semibold">{data[data.length - 1].title}</p>
-          <p className="text-xs text-gray-400">
-            {new Date(data[data.length - 1].createdAt).toLocaleString()}
-          </p>
-        </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 };
 

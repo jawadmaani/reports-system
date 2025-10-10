@@ -8,6 +8,5 @@ export default function Home() {
         Manage and track your reports efficiently.
       </p>
     </div>
-    
   );
 }

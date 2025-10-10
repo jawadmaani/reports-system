@@ -5,40 +5,40 @@ import {
   deleteReport,
   fetchDummyReports,
 } from "../../../data/fetchDummyReports";
-import { reportSchema, Report } from "@/types/types";
+import { reportSchema } from "@/types/types";
 import { useRouter } from "next/navigation";
-import {  useState } from "react";
-import ReportMap from "@/components/reports/report-map";
-import ReportEditPage from "@/components/reports/report-edit";
+import { useState } from "react";
+import ReportFormDialog from "@/components/main-header/report-dialog";
 
 interface ReportsDetailsPageProps {
   params: { reportSlug: string };
+  onDeleteSuccess?: () => void;
 }
 
-const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
-  const navigate = useRouter();
+const ReportsDetailsPage = ({
+  params,
+  onDeleteSuccess,
+}: ReportsDetailsPageProps) => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showMap, setShowMap] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["report", params.reportSlug],
-    queryFn: () => fetchDummyReports( params.reportSlug),
+    queryFn: () => fetchDummyReports(params.reportSlug),
   });
 
   const { mutate } = useMutation({
     mutationFn: deleteReport,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reports"] });
-      navigate.push("/reports");
+      setIsDeleting(false);
+      router.push("/reports");
+      if (onDeleteSuccess) onDeleteSuccess();
     },
   });
 
-  const handleDelete = () => {
-    if (data) mutate( params.reportSlug);
-  };
-  const handleStartDelete = () => setIsDeleting(true);
-  const handleCancelDelete = () => setIsDeleting(false);
+  const handleDelete = () => data && mutate(params.reportSlug);
 
   if (isLoading)
     return <p className="text-gray-500 text-center py-10">Loading report...</p>;
@@ -53,100 +53,84 @@ const ReportsDetailsPage = ({ params }: ReportsDetailsPageProps) => {
 
   const parsedData = reportSchema.parse(data);
 
-  const handleUpdate = (updatedReport: Report) => {
-    queryClient.setQueryData(["report",  params.reportSlug], updatedReport);
-  };
-
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <>
       {isDeleting && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm space-y-4">
-            <p className="text-gray-800 font-semibold text-center">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]">
+          <div className="bg-white/95 backdrop-blur-md p-6 rounded-2xl w-full max-w-sm shadow-lg space-y-4 text-center">
+            <p className="text-gray-800 font-medium">
               Are you sure you want to delete this report?
             </p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-3 mt-3">
               <button
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-                onClick={handleCancelDelete}
+                className="px-5 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-150"
+                onClick={() => setIsDeleting(false)}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="px-5 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all duration-150"
                 onClick={handleDelete}
               >
-                Confirm Delete
+                Delete
               </button>
             </div>
           </div>
         </div>
       )}
-      <article className="bg-white rounded-2xl shadow-lg p-6 space-y-6 border border-gray-100">
-        <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {parsedData.title}
-          </h1>
+
+      <div className="absolute right-0 top-0 h-full w-[320px] bg-white/90 backdrop-blur-sm border-l border-gray-100 shadow-lg flex flex-col p-6 rounded-l-[2rem]">
+        <div className="flex flex-col gap-3 flex-grow">
           <span
-            className={`px-3 py-1 rounded-full font-medium text-sm ${
+            className={`self-end px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm ${
               parsedData.importance === "high"
-                ? "bg-red-100 text-red-800"
+                ? "bg-red-500"
                 : parsedData.importance === "medium"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-green-100 text-green-800"
+                ? "bg-yellow-500"
+                : "bg-green-500"
             }`}
           >
             {parsedData.importance}
           </span>
-        </header>
 
-        <p className="text-gray-700 text-lg">{parsedData.description}</p>
+          <h2 className="text-lg font-semibold text-gray-900 leading-snug">
+            {parsedData.title}
+          </h2>
 
-        <div className="flex flex-wrap items-center gap-4 text-gray-600 font-medium">
-          <span>Type:</span>
-          <span className="px-2 py-1 bg-gray-100 rounded-lg">
-            {parsedData.type}
-          </span>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            {parsedData.description}
+          </p>
+
+          <p className="text-[11px] text-gray-400 mt-1">
+            {new Date(parsedData.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+
+          <div className="grid grid-cols-2 gap-3 mt-6">
+            <ReportFormDialog
+              mode="edit"
+              triggerLabel="Edit"
+              initialData={parsedData}
+            />
+
+            <button
+              onClick={() => setIsDeleting(true)}
+              className="w-full py-2.5 px-4 text-sm font-semibold rounded-full shadow-md 
+             bg-red-600 hover:bg-red-700 text-white 
+             transition-all duration-200 hover:scale-105 active:scale-95 
+             focus:outline-none focus:ring-2 focus:ring-red-400/50"
+            >
+              Delete
+            </button>
+          </div>
         </div>
-
-        <div className="mt-4">
-          <strong className="text-gray-800">Location:</strong>
-          <button
-            className="ml-3 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            onClick={() => setShowMap((prev) => !prev)}
-          >
-            {showMap ? "Hide Map" : "Show Map"}
-          </button>
-          {showMap && (
-            <div className="mt-4 rounded-xl overflow-hidden shadow-lg border border-gray-200">
-              <ReportMap
-                latitude={parsedData.location.lat}
-                longitude={parsedData.location.lng}
-                height="400px"
-                interactive={false}
-              />
-            </div>
-          )}
-        </div>
-
-        <p className="text-sm text-gray-500">
-          Created At: {new Date(parsedData.createdAt).toLocaleString()}
-        </p>
-
-        <div className="mt-6 bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-100">
-          <ReportEditPage data={parsedData} onUpdate={handleUpdate} />
-        </div>
-
-        <div className="flex justify-end mt-4">
-          <button
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow"
-            onClick={handleStartDelete}
-          >
-            Delete Report
-          </button>
-        </div>
-      </article>
-    </div>
+      </div>
+    </>
   );
 };
 

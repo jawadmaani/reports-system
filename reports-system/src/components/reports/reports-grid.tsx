@@ -3,19 +3,20 @@ import { Report } from "../../types/types";
 
 type ReportsGridProps = {
   reports: Report[];
+  onSelect?: (report: Report) => void;
 };
 
-const ReportsGrid = ({ reports }: ReportsGridProps) => {
+const ReportsGrid = ({ reports, onSelect }: ReportsGridProps) => {
   return (
-    <div className="p-4">
-      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section className="p-3">
+      <ul className="flex flex-col gap-2.5 divide-y divide-gray-100">
         {reports.map((report) => (
-          <li key={report.id}>
-            <ReportsItem report={report} />
+          <li key={report.id} className="pt-2 first:pt-0">
+            <ReportsItem report={report} onSelect={onSelect} />
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 };
 
