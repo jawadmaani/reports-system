@@ -17,7 +17,7 @@ export default function ReportsPage() {
     queryFn: () => fetchDummyReports(),
   });
 
-    const parseData = reportsSchema.parse(data);
+  const parseData = data ? reportsSchema.parse(data) : [];
 
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,7 +42,6 @@ export default function ReportsPage() {
     return (
       <p className="text-gray-500 text-center py-10">No reports available.</p>
     );
-
 
   return (
     <div className="flex min-h-screen bg-gray-50 flex-col">
