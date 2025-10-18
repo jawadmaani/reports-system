@@ -8,7 +8,7 @@ export const parseReportFormData = (
   const data = Object.fromEntries(formData);
 
   const reportData: Report = {
-    id: existingReport ? existingReport.id : Date.now().toString(),
+    id: existingReport ? existingReport.id : undefined,
     createdAt: existingReport
       ? existingReport.createdAt
       : new Date().toISOString(),
@@ -19,7 +19,7 @@ export const parseReportFormData = (
     },
     importance: data.importance as "low" | "medium" | "high",
     type: data.type as "trafficLight" | "roadwork" | "accident" | "other",
-    description: data.description as string,
+    description: data.description ? (data.description as string) : undefined,
   };
 
   const parsed = reportSchema.safeParse(reportData);
