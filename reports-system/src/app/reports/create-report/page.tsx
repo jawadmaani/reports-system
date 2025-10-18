@@ -1,6 +1,5 @@
 "use client";
 import ReportForm from "@/components/reports/report-form";
-import { addReport } from "@/data/fetchDummyReports";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { parseReportFormData } from "@/utils/parseReportFormData";
@@ -10,7 +9,7 @@ const CreateReportPage = () => {
   const navigate = useRouter();
 
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: addReport,
+    //mutationFn: addReport,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       navigate.push("/reports");
@@ -25,7 +24,7 @@ const CreateReportPage = () => {
     const parsedData = parseReportFormData(formData);
     if (!parsedData) return;
 
-    mutate(parsedData);
+   // mutate(parsedData);
   };
 
   return (

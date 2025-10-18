@@ -1,18 +1,15 @@
 "use client";
-
+import { Report } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  deleteReport,
-  fetchDummyReports,
-} from "../../../data/fetchDummyReports";
-import { reportSchema } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReportFormDialog from "@/components/main-header/report-dialog";
+import { deleteReport, fetchReportById } from "@/api/reports-api";
 
 interface ReportsDetailsPageProps {
   params: { reportSlug: string };
   onDeleteSuccess?: () => void;
+  
 }
 
 const ReportsDetailsPage = ({
@@ -23,22 +20,27 @@ const ReportsDetailsPage = ({
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["report", params.reportSlug],
-    queryFn: () => fetchDummyReports(params.reportSlug),
+  const { data, isLoading, isError, error } = useQuery<Report>({
+    queryKey: ["reports", params.reportSlug],
+    queryFn: () =>fetchReportById(Number(params.reportSlug)),
   });
 
   const { mutate } = useMutation({
-    mutationFn: deleteReport,
+    mutationFn:(id:number)=> deleteReport(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       setIsDeleting(false);
       router.push("/reports");
       if (onDeleteSuccess) onDeleteSuccess();
     },
+    onError: (error: string) => {
+    setIsDeleting(false);
+    console.error("Delete failed:", error);
+    alert("Failed to delete the report. Please try again.");
+  },
   });
 
-  const handleDelete = () => data && mutate(params.reportSlug);
+  const handleDelete = () => data && mutate(Number(params.reportSlug));
 
   if (isLoading)
     return <p className="text-gray-500 text-center py-10">Loading report...</p>;
@@ -51,7 +53,6 @@ const ReportsDetailsPage = ({
   if (!data)
     return <p className="text-gray-500 text-center py-10">No data available</p>;
 
-  const parsedData = reportSchema.parse(data);
 
   return (
     <>
@@ -83,26 +84,26 @@ const ReportsDetailsPage = ({
         <div className="flex flex-col gap-3 flex-grow">
           <span
             className={`self-end px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm ${
-              parsedData.importance === "high"
+              data.importance === "high"
                 ? "bg-red-500"
-                : parsedData.importance === "medium"
+                : data.importance === "medium"
                 ? "bg-yellow-500"
                 : "bg-green-500"
             }`}
           >
-            {parsedData.importance}
+            {data.importance}
           </span>
 
           <h2 className="text-lg font-semibold text-gray-900 leading-snug">
-            {parsedData.title}
+            {data.title}
           </h2>
 
           <p className="text-gray-600 text-sm leading-relaxed">
-            {parsedData.description}
+            {data.description}
           </p>
 
           <p className="text-[11px] text-gray-400 mt-1">
-            {new Date(parsedData.createdAt).toLocaleDateString("en-US", {
+            {new Date(data.createdAt).toLocaleDateString("en-US", {
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -115,7 +116,7 @@ const ReportsDetailsPage = ({
             <ReportFormDialog
               mode="edit"
               triggerLabel="Edit"
-              initialData={parsedData}
+              initialData={data}
             />
 
             <button

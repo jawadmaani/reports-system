@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { addReport, updateReport } from "@/data/fetchDummyReports";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Report } from "@/types/types";
 import ReportForm from "../reports/report-form";
@@ -15,12 +14,14 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { addReport, updateReport } from "@/api/reports-api";
 
 interface ReportFormDialogProps {
   mode: "create" | "edit";
   initialData?: Report;
   triggerLabel?: React.ReactNode;
 }
+
 const ReportFormDialog = ({
   mode,
   initialData,
@@ -29,15 +30,19 @@ const ReportFormDialog = ({
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const mutationFn = (data: Report | { id: string; updated: Report }) => {
-    if (mode === "edit" && "id" in data)
-      return updateReport(data as { id: string; updated: Report });
+  const mutationFn = (data: Report | { id: number; updated: Report }) => {
+    if (mode === "edit" && "id" in data) {
+      const { id, updated } = data as { id: number; updated: Report };
+      return updateReport(id, updated);
+    }
     return addReport(data as Report);
   };
+
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reports"] });
+      
       setIsOpen(false);
     },
   });
@@ -49,7 +54,7 @@ const ReportFormDialog = ({
     if (!parsedData) return;
 
     if (mode === "edit" && initialData) {
-      mutate({ id: initialData.id, updated: parsedData });
+      mutate({ id: Number(initialData.id), updated: parsedData });
     } else {
       mutate(parsedData);
     }
@@ -66,7 +71,7 @@ const ReportFormDialog = ({
       {triggerLabel && (
         <DialogTrigger asChild>
           <Button
-            className={`px-4 py-2 text-sm hover:scale-105  font-semibold rounded-full shadow-md transition-transform ${
+            className={`px-4 py-2 text-sm hover:scale-105 font-semibold rounded-full shadow-md transition-transform ${
               mode === "create"
                 ? "bg-green-600 hover:bg-green-700"
                 : "bg-blue-600 hover:bg-blue-700"

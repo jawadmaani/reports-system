@@ -1,8 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchDummyReports } from "../../data/fetchDummyReports";
-import { reportsSchema, Report } from "@/types/types";
+import { Report } from "@/types/types";
 import ReportsGrid from "@/components/reports/reports-grid";
 import ReportFormDialog from "@/components/main-header/report-dialog";
 import ReportCard from "@/components/reports/report-card";
@@ -10,24 +9,29 @@ import ReportMap from "@/components/reports/report-map";
 import ReportsDetailsPage from "@/app/reports/[reportSlug]/page";
 import { useState, useMemo } from "react";
 import { X } from "lucide-react";
+import { fetchReports } from "@/api/reports-api";
 
 export default function ReportsPage() {
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error } = useQuery<Report[]>({
     queryKey: ["reports"],
-    queryFn: () => fetchDummyReports(),
+    queryFn: fetchReports,
   });
 
-  const parseData = data ? reportsSchema.parse(data) : [];
-
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const selectedReport = useMemo(() => {
+    if (!selectedReportId || !data) return null;
+    return data.find((r) => r.id === selectedReportId) || null;
+  }, [selectedReportId, data]);
+
   const filteredReports = useMemo(() => {
-    if (!searchTerm) return parseData;
-    return parseData.filter((report) =>
+    if (!searchTerm) return data;
+    return data?.filter((report) =>
       report.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm, parseData]);
+  }, [searchTerm, data]);
+
   if (isPending)
     return (
       <p className="text-gray-500 text-center py-10">Loading reports...</p>
@@ -47,7 +51,7 @@ export default function ReportsPage() {
     <div className="flex min-h-screen bg-gray-50 flex-col">
       <header className="bg-white border-b border-gray-200 shadow-sm z-20 relative">
         <div className="px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <ReportCard data={parseData} />
+          <ReportCard data={data} />
           <ReportFormDialog mode="create" triggerLabel="Create Report" />
         </div>
       </header>
@@ -65,17 +69,19 @@ export default function ReportsPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
-            <ReportsGrid
-              reports={filteredReports}
-              onSelect={(report) => setSelectedReport(report)}
-            />
+            {filteredReports && filteredReports.length > 0 && (
+              <ReportsGrid
+                reports={filteredReports}
+                onSelect={(report) => setSelectedReportId(report.id ?? null)}
+              />
+            )}
           </div>
         </aside>
 
         <main className="flex-1 relative overflow-hidden">
           {selectedReport ? (
             <ReportMap
-              key={selectedReport.id}
+              key={`${selectedReport.id}-${selectedReport.location.lat}-${selectedReport.location.lng}`}
               latitude={selectedReport.location.lat}
               longitude={selectedReport.location.lng}
               interactive={false}
@@ -105,7 +111,7 @@ export default function ReportsPage() {
         {selectedReport && (
           <div className="absolute right-0 top-0 h-full w-[380px] z-30 flex flex-col items-end p-4 animate-in slide-in-from-right duration-300">
             <button
-              onClick={() => setSelectedReport(null)}
+              onClick={() => setSelectedReportId(null)}
               className="mb-4 w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all hover:rotate-90 duration-300"
               aria-label="Close details"
             >
@@ -114,8 +120,8 @@ export default function ReportsPage() {
 
             <div className="w-full">
               <ReportsDetailsPage
-                params={{ reportSlug: selectedReport.id }}
-                onDeleteSuccess={() => setSelectedReport(null)}
+                params={{ reportSlug: String(selectedReport.id) }}
+                onDeleteSuccess={() => setSelectedReportId(null)}
               />
             </div>
           </div>
